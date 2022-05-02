@@ -13,10 +13,10 @@ import { app } from '@/lib/firebase';
 const auth = getAuth(app);
 
 type UserState = {
-  accessToken: string;
+  id: number;
   uid: string;
   email: string;
-  displayName: string;
+  name: string;
 };
 
 const userState = atom<UserState | null>({
@@ -25,21 +25,22 @@ const userState = atom<UserState | null>({
   dangerouslyAllowMutability: true,
   effects: [
     ({ setSelf }) => {
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
         if (user) {
-          const token = user.accessToken;
+          const token = await auth.currentUser?.getIdToken();
 
           const fetchUserByAPI = async () => {
             const res = await axios.post('http://localhost:3000/api/v1/auth/users', {
               token,
             });
 
-            const { id, name, uid } = res.data;
+            const { email, id, name, uid } = res.data;
 
             const userState = {
               id,
               name,
               uid,
+              email,
             };
 
             setSelf(userState);
@@ -58,7 +59,6 @@ const userState = atom<UserState | null>({
   ],
 });
 
-// e: atomの値をサブスクライブするフック
 export const useAuth = () => {
   return useRecoilValue(userState);
 };
