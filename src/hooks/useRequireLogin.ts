@@ -8,8 +8,10 @@ export const useRequireLogin = () => {
   const router = useRouter();
 
   useEffect(() => {
-    user && router.push('/');
-
-    !user && router.push('/login');
+    if (user) {
+      router.push('/');
+    } else {
+      router.push('/login');
+    }
   }, [user]);
 };
