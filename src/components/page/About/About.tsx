@@ -1,12 +1,19 @@
-import type { VFC } from 'react';
+import Link from 'next/link';
+import type { FC } from 'react';
 
-export const About: VFC = () => {
+import { useRequireLogin } from '@/hooks/useRequireLogin';
+
+export const About: FC = () => {
   const title = 'アバウト';
+  useRequireLogin();
 
   return (
     <>
       <title>{title}</title>
       <div>about page!</div>
+      <Link href='/'>
+        <a>TOPへ戻る</a>
+      </Link>
     </>
   );
 };
