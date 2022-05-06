@@ -1,8 +1,10 @@
 import type { FC } from 'react';
 
-import { login } from '@/globalStates/userState';
+import { login, useRequireLogin } from '@/globalStates/userState';
 
 export const Login: FC = () => {
+  useRequireLogin();
+
   return (
     <>
       <h2>Login Page</h2>

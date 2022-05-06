@@ -6,11 +6,11 @@ import {
   signInWithRedirect,
   signOut,
 } from 'firebase/auth';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { atom, useRecoilValue } from 'recoil';
 
 import { app } from '@/lib/firebase';
-
-const auth = getAuth(app);
 
 type UserState = {
   id: number;
@@ -18,6 +18,8 @@ type UserState = {
   email: string;
   name: string;
 };
+
+const auth = getAuth(app);
 
 const userState = atom<UserState | null>({
   key: 'userState',
@@ -28,6 +30,7 @@ const userState = atom<UserState | null>({
       const unsubscribe = onAuthStateChanged(auth, async (user) => {
         if (user) {
           const token = await auth.currentUser?.getIdToken();
+          console.log(token);
 
           const fetchUserByAPI = async () => {
             const res = await axios.post('http://localhost:3000/api/v1/auth/users', {
@@ -61,6 +64,19 @@ const userState = atom<UserState | null>({
 
 export const useAuth = () => {
   return useRecoilValue(userState);
+};
+
+export const useRequireLogin = () => {
+  const user = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user) {
+      router.push('/');
+    } else {
+      router.push('/login');
+    }
+  }, [user]);
 };
 
 export const login = (): Promise<void> => {

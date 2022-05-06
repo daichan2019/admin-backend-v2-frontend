@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { FC } from 'react';
 
-import { useRequireLogin } from '@/hooks/useRequireLogin';
+import { useRequireLogin } from '@/globalStates/userState';
 
 export const About: FC = () => {
   const title = 'アバウト';
